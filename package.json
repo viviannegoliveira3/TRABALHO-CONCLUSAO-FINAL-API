@@ -1,0 +1,26 @@
+{
+  "name": "trabalho-conclusao-final-api",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:graphql": "node src/server-graphql.js",
+    "test": "mocha --timeout 5000",
+    "test:external": "mocha test/external/**/*.test.js --timeout 5000",
+    "test:controller": "mocha test/controller/**/*.test.js --timeout 5000",
+    "test:graphql": "mocha test/graphql.test.js --timeout 5000"
+  },
+  "dependencies": {
+    "apollo-server-express": "^3.12.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "graphql": "^16.8.1",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3",
+    "sinon": "^17.0.1"
+  }
+}
