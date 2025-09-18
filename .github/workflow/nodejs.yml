@@ -5,7 +5,7 @@ on:
   push: {}
   # Roda em pull requests que têm a branch "main" como alvo
   pull_request:
-    branches: [ "criando-pipeline" ]
+    branches: [ "main" ]
 
 jobs:
   build:
