@@ -8,40 +8,56 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
     - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-
+        cache: 'npm' # Adiciona cache para acelerar a instalação
     - name: Install dependencies
       run: npm install
-
     - name: Rodar os testes de API via Controller
       run: npm run test-rest-controller
 
-    - name: Subir a API Rest 
+  e2e-test:
+    # Este job só roda se o job 'test' for bem-sucedido
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm install
+
+    - name: Subir a API Rest
       run: npm run start-rest &
 
-    - name: Subir a API GraphQL 
+    - name: Subir a API GraphQL
       run: npm run start-graphql &
 
-    - name: Esperar as APIs estarem Funcionando
-      run: sleep 8
+    - name: Esperar as APIs estarem funcionando
+      # Usa um comando mais robusto para esperar as APIs responderem, em vez de um 'sleep' fixo.
+      # Tenta por até 30 segundos.
+      run: |
+        npm install --global wait-on
+        wait-on http://localhost:3000/api-docs/ http://localhost:4000/graphql --timeout 30000
 
     - name: Criar .env
       run: |
         echo "BASE_URL_REST=${{ secrets.BASE_URL_REST }}" >> .env
         echo "BASE_URL_GRAPHQL=${{ secrets.BASE_URL_GRAPHQL }}" >> .env
 
-    - name: Rodar os testes External de API Rest via HTTP
+    - name: Rodar os testes E2E da API Rest
       run: npm run test-rest-external
 
-    - name: Rodar os testes External de API GraphQL via HTTP
+    - name: Rodar os testes E2E da API GraphQL
       run: npm run test-graphql-external
