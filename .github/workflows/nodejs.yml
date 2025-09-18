@@ -47,7 +47,7 @@ jobs:
         npm install --global wait-on
         
         echo "Aguardando APIs ficarem prontas (timeout: 60s)..."
-        if ! wait-on http://localhost:3000/api-docs/ http-get://localhost:4000/.well-known/apollo/server-health --timeout 60000; then
+        if ! wait-on http://localhost:3000/health http-get://localhost:4000/.well-known/apollo/server-health --timeout 60000; then
           echo "Timed out esperando pelas APIs. Exibindo logs dos servidores:"
           echo "--- LOGS API REST ---"
           cat rest_api.log
