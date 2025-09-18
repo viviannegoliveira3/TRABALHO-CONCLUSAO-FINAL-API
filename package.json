@@ -6,9 +6,9 @@
     "start": "node src/server.js",
     "start-graphql": "node src/server-graphql.js",
     "test": "mocha --timeout 5000",
-    "test-rest-external": "mocha test/external/**/*.test.js --timeout 5000",
-    "test-rest-controller": "mocha test/controller/**/*.test.js --timeout 5000",
-    "test:ci": "mocha \"test/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=./junit.xml --timeout 5000 --exit"
+    "test-rest-external": "npx mocha test/external/**/*.test.js --timeout 5000",
+    "test-rest-controller": "npx mocha test/controller/**/*.test.js --timeout 5000",
+    "test:ci": "npx mocha \"test/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=./junit.xml --timeout 5000 --exit"
   },
   "dependencies": {
     "apollo-server-express": "^3.12.0",
