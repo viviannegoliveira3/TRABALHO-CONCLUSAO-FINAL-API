@@ -1,10 +1,11 @@
 name: Node.js CI & Tests
 
 on:
-  push:
-    branches: [ "main" ]
+  # Roda em qualquer push para qualquer branch
+  push: {}
+  # Roda em pull requests que têm a branch "main" como alvo
   pull_request:
-    branches: [ "main", "criando-pipeline" ]
+    branches: [ "criando-pipeline" ]
 
 jobs:
   build:
