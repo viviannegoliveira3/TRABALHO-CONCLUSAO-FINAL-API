@@ -8,7 +8,8 @@
     "test": "mocha --timeout 5000",
     "test-rest-external": "node ./node_modules/mocha/bin/mocha test/external/**/*.test.js --timeout 5000",
     "test-rest-controller": "node ./node_modules/mocha/bin/mocha test/controller/**/*.test.js --timeout 5000",
-    "test:ci": "node ./node_modules/mocha/bin/mocha \"test/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=./junit.xml --timeout 5000 --exit"
+    "test:ci": "node ./node_modules/mocha/bin/mocha \"test/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=./junit.xml --timeout 5000 --exit",
+    "test-graphql-external": "node ./node_modules/mocha/bin/mocha test/graphql/**/*.test.js --timeout 5000"
   },
   "dependencies": {
     "apollo-server-express": "^3.12.0",
