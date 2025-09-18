@@ -1,46 +1,52 @@
-name: Testes de CI
+name: Node.js CI & Tests
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "criando-pipeline" ]
+    branches: [ "main", "criando-pipeline" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Use Node.js 20.x
+    - name: Setup Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
+        cache: 'npm'
 
     - name: Install dependencies
       run: npm install
 
-    - name: Rodar os testes de API via Controller
-      run: npm run test-rest-controller
+    - name: Start REST API
+      run: npm start &
 
-    - name: Subir a API Rest 
-      run: npm run start-rest &
-
-    - name: Subir a API GraphQL 
+    - name: Start GraphQL API
       run: npm run start-graphql &
 
-    - name: Esperar as APIs estarem Funcionando
-      run: sleep 8
+    - name: Wait for APIs to be ready
+      # Aguarda as APIs estarem prontas antes de rodar os testes.
+      run: npx wait-on http://localhost:3000 http://localhost:4000/graphql --timeout 60000
 
-    - name: Criar .env
+    - name: Create .env file for tests
       run: |
-        echo "BASE_URL_REST=${{ secrets.BASE_URL_REST }}" >> .env
-        echo "BASE_URL_GRAPHQL=${{ secrets.BASE_URL_GRAPHQL }}" >> .env
+        echo "BASE_URL_REST=http://localhost:3000" >> .env
+        echo "BASE_URL_GRAPHQL=http://localhost:4000/graphql" >> .env
 
-    - name: Rodar os testes External de API Rest via HTTP
-      run: npm run test-rest-external
+    - name: Run all tests and generate report
+      # Executa o script de CI que roda todos os testes e gera o relatório junit.xml
+      run: npm run test:ci
 
-    - name: Rodar os testes External de API GraphQL via HTTP
-      run: npm run test-graphql-external
+    - name: Publish Test Results
+      # Publica um resumo dos resultados na aba "Checks" do Pull Request.
+      uses: dorny/test-reporter@v1
+      if: success() || failure() # Executa mesmo se os testes falharem
+      with:
+        name: Mocha Tests
+        path: junit.xml # Caminho para o relatório de teste gerado pelo Mocha
+        reporter: mocha-junit # Formato do relatório
