@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const users = require('../models/userModel'); // Nosso "banco de dados" em memória
+const users = require('../../userModel'); // Nosso "banco de dados" em memória
 
 // ATENÇÃO: Em um projeto real, esta chave secreta NUNCA deve ser exposta no código.
 // Use variáveis de ambiente (process.env.JWT_SECRET).
