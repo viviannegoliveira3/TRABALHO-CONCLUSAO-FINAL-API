@@ -38,18 +38,24 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Subir a API Rest
-      run: node src/server.js &
-
-    - name: Subir a API GraphQL
-      run: node src/server-graphql.js &
-
-    - name: Esperar as APIs estarem funcionando
-      # Usa um comando mais robusto para esperar as APIs responderem, em vez de um 'sleep' fixo.
-      # Tenta por até 30 segundos.
+    - name: Iniciar APIs e aguardar disponibilidade
       run: |
+        echo "Iniciando servidores em background e capturando logs..."
+        node src/server.js > rest_api.log 2>&1 &
+        node src/server-graphql.js > graphql_api.log 2>&1 &
+        
         npm install --global wait-on
-        wait-on http://localhost:3000/api-docs/ http-get://localhost:4000/.well-known/apollo/server-health --timeout 60000
+        
+        echo "Aguardando APIs ficarem prontas (timeout: 60s)..."
+        if ! wait-on http://localhost:3000/api-docs/ http-get://localhost:4000/.well-known/apollo/server-health --timeout 60000; then
+          echo "Timed out esperando pelas APIs. Exibindo logs dos servidores:"
+          echo "--- LOGS API REST ---"
+          cat rest_api.log
+          echo "--- LOGS API GRAPHQL ---"
+          cat graphql_api.log
+          exit 1
+        fi
+        echo "APIs estão prontas!"
 
     - name: Criar .env para testes E2E
       run: |
