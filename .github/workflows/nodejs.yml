@@ -55,6 +55,7 @@ jobs:
           cat graphql_api.log
           exit 1
         fi
+        
         echo "APIs estão prontas!"
 
     - name: Criar .env para testes E2E
