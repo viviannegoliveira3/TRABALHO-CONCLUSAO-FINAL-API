@@ -39,10 +39,10 @@ jobs:
       run: npm install
 
     - name: Subir a API Rest
-      run: npm run start-rest &
+      run: node src/server.js 
 
     - name: Subir a API GraphQL
-      run: npm run start-graphql &
+      run: node src/server-graphql.js &
 
     - name: Esperar as APIs estarem funcionando
       # Usa um comando mais robusto para esperar as APIs responderem, em vez de um 'sleep' fixo.
