@@ -1,38 +1,35 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const userRoutes = require('./userRoutes');
+const checkoutRoutes = require('./checkoutRoutes');
 
 const app = express();
 app.use(bodyParser.json());
 
-const SECRET = 'supersecret';
-const users = [{ username: 'user', password: 'pass', balance: 100 }];
-
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(u => u.username === username && u.password === password);
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
-  const token = jwt.sign({ username }, SECRET, { expiresIn: '1h' });
-  res.json({ token });
+// Endpoint de Health Check
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
 });
 
-function authenticate(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) return res.status(401).json({ error: 'No token provided' });
-  const token = authHeader.split(' ')[1];
-  jwt.verify(token, SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ error: 'Invalid token' });
-    req.user = decoded;
-    next();
-  });
-}
+// Configuração do Swagger (exemplo, ajuste conforme seu projeto)
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Checkout API',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./src/routes/*.js'], // Ajuste o caminho para seus arquivos de rota
+};
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.post('/api/transfer', authenticate, (req, res) => {
-  const { amount } = req.body;
-  const user = users.find(u => u.username === req.user.username);
-  if (!user || user.balance < amount) return res.status(400).json({ error: 'Insufficient funds' });
-  user.balance -= amount;
-  res.json({ balance: user.balance });
-});
+// Registra as rotas da aplicação
+app.use('/api/users', userRoutes);
+app.use('/api/checkout', checkoutRoutes);
 
 module.exports = app;

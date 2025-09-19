@@ -4,23 +4,29 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "start:graphql": "node src/server-graphql.js",
+    "start-graphql": "node src/server-graphql.js",
     "test": "mocha --timeout 5000",
-    "test:external": "mocha test/external/**/*.test.js --timeout 5000",
-    "test:controller": "mocha test/controller/**/*.test.js --timeout 5000",
-    "test:graphql": "mocha test/graphql.test.js --timeout 5000"
+    "test-rest-external": "node ./node_modules/mocha/bin/mocha test/external/**/*.test.js --timeout 5000",
+    "test-rest-controller": "node ./node_modules/mocha/bin/mocha test/controller/**/*.test.js --timeout 5000",
+    "test:ci": "node ./node_modules/mocha/bin/mocha \"test/**/*.test.js\" --reporter mocha-junit-reporter --reporter-options mochaFile=./junit.xml --timeout 5000 --exit",
+    "test-graphql-external": "node ./node_modules/mocha/bin/mocha test/graphql/**/*.test.js --timeout 5000"
   },
   "dependencies": {
     "apollo-server-express": "^3.12.0",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "graphql": "^16.8.1",
-    "jsonwebtoken": "^9.0.0"
+    "jsonwebtoken": "^9.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
+    "mocha-junit-reporter": "^2.2.1",
     "supertest": "^6.3.3",
-    "sinon": "^17.0.1"
+    "sinon": "^17.0.1",
+    "wait-on": "^7.2.0"
   }
 }

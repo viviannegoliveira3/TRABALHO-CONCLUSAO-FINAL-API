@@ -1,0 +1,69 @@
+name: Node.js CI & Tests
+
+on:
+  # Roda em qualquer push para qualquer branch
+  push: {}
+  # Roda em pull requests que têm a branch "main" como alvo
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm' # Adiciona cache para acelerar a instalação
+    - name: Install dependencies
+      run: npm install
+    - name: Rodar os testes de API via Controller
+      run: npm run test-rest-controller
+
+  e2e-test:
+    # Este job só roda se o job 'test' for bem-sucedido
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm install
+
+    - name: Iniciar APIs e aguardar disponibilidade
+      run: |
+        echo "Iniciando servidores em background e capturando logs..."
+        node src/server.js > rest_api.log 2>&1 &
+        node src/server-graphql.js > graphql_api.log 2>&1 &
+        
+        npm install --global wait-on
+        
+        echo "Aguardando APIs ficarem prontas (timeout: 60s)..."
+        if ! wait-on http://localhost:3000/health http-get://localhost:4000/.well-known/apollo/server-health --timeout 60000; then
+          echo "Timed out esperando pelas APIs. Exibindo logs dos servidores:"
+          echo "--- LOGS API REST ---"
+          cat rest_api.log
+          echo "--- LOGS API GRAPHQL ---"
+          cat graphql_api.log
+          exit 1
+        fi
+        echo "APIs estão prontas!"
+
+    - name: Criar .env para testes E2E
+      run: |
+        echo "BASE_URL_REST=http://localhost:3000" >> .env
+        echo "BASE_URL_GRAPHQL=http://localhost:4000" >> .env
+
+    - name: Rodar os testes E2E da API Rest
+      run: npm run test-rest-external
+
+    - name: Rodar os testes E2E da API GraphQL
+      run: npm run test-graphql-external
