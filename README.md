@@ -185,7 +185,7 @@ query Users {
 
 ### REST
 ```bash
-node rest/server.js
+node src/server.js
 ```
 Acesse a documentação Swagger em [http://localhost:3000/api-docs/](http://localhost:3000/api-docs)
 
@@ -193,7 +193,7 @@ Acesse a documentação Swagger em [http://localhost:3000/api-docs/](http://loca
 ```bash
 node graphql/app.js
 ```
-Acesse o playground GraphQL em [http://localhost:4000/graphql/](http://localhost:4000/graphql)
+Acesse o playground GraphQL em [http://localhost:4000/graphql](http://localhost:4000/graphql)
 
 ## Endpoints REST
 - POST `/api/users/register` — Registro de usuário
@@ -207,7 +207,7 @@ Acesse o playground GraphQL em [http://localhost:4000/graphql/](http://localhost
 - Resposta do checkout contém valor final
 
 ## Banco de dados
-- Usuários e produtos em memória (veja arquivos em `src/models`)
+- Usuários e produtos em memória (veja arquivos em `src/userModel.js`)
 
 ## Testes
 - Para testes automatizados, importe o `app` de `rest/app.js` ou `graphql/app.js` sem o método `listen()`
