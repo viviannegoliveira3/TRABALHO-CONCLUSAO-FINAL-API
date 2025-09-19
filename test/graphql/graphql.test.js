@@ -1,5 +1,5 @@
 const request = require('supertest');
-const startServer = require('../src/graphql');
+const startServer = require('../../src/graphql');
 const { expect } = require('chai');
 
 let app;
