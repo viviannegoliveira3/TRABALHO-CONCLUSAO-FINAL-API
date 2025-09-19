@@ -43,7 +43,19 @@ jobs:
         echo "Iniciando servidores em background e capturando logs..."
         node src/server.js > rest_api.log 2>&1 &
         node src/server-graphql.js > graphql_api.log 2>&1 &
-      
+        
+        npm install --global wait-on
+        
+        echo "Aguardando APIs ficarem prontas (timeout: 60s)..."
+        if ! wait-on http://localhost:3000/health http-get://localhost:4000/.well-known/apollo/server-health --timeout 60000; then
+          echo "Timed out esperando pelas APIs. Exibindo logs dos servidores:"
+          echo "--- LOGS API REST ---"
+          cat rest_api.log
+          echo "--- LOGS API GRAPHQL ---"
+          cat graphql_api.log
+          exit 1
+        fi
+        echo "APIs estão prontas!"
 
     - name: Criar .env para testes E2E
       run: |
