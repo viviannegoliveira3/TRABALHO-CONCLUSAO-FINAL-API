@@ -46,4 +46,4 @@ const processGraphQL = (parent, args, context) => {
   return processCheckoutLogic(args, context.user);
 };
 
-module.exports = { processGraphQL };
+module.exports = { processCheckoutLogic, processGraphQL };

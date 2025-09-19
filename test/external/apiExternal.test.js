@@ -42,8 +42,10 @@ describe('External Auth & Checkout API', () => {
         freight: 10,
         paymentMethod: 'boleto'
       });
-    expect(res.status).to.equal(400);
-    expect(res.body.message).to.equal('Checkout successful');
+    // Um checkout bem-sucedido deve retornar status 200
+    expect(res.status).to.equal(200);
+    // A resposta deve conter o valor final calculado
+    expect(res.body.valorFinal).to.equal(360); // (1 * 350) + 10
   });
 
   it('should fail checkout without a token', async () => {
